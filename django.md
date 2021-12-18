@@ -37,6 +37,9 @@
 - 데이터베이스에 테이블을 만들기 위한 설계도를 만드는 작업이다.
 - 해당 명령어를 실행하면 앱의 migrations 파이썬 패키지 내에 뭔가 파일이 생기는데 그게 DB에 테이블 적용하기 위한 설계도이다! 
 
+## makemigrations로 생긴 설계도를 db에 적용시키기전 sql확인하기!
+- `./manage.py sqlmigrate polls 0001`,  혹은 `0002`를 통해 실행될 sql을 출력하여 확인할 수 있다.
+
 ## manage.py를 통해 migrate명령어 실행
 - makemigrations를 통해 만들어진 설계도를 토대로 실제로 디비에 테이블을 생성한다.
 
@@ -57,9 +60,35 @@
   - 내가 만든 앱 패키지의 `admin.py`에 아래와 같이 작성하면 된다.
 ```python
 from django.contrib import admin
-from .models import Question
+from polls.models import Question
 # Register your models here.
 
 # 내가 만든 모델을 어드민에 추가하는 코드
 admin.site.register(Question)
 ```
+
+# Django 뷰와 템플릿
+
+## 뷰와 매핑되는 url중 pathVariable적용하기
+- urls.py 에 `path('<int:question_id>/', views.detail, name='detail'),` 처럼 pathVariable을 적용할 수 있따. 추가로 name은 해당 url에 이름을 지정하는 것이다. 변수처럼 사용하여, 하드코딩을 막기 위한것.!
+- 위 url의 pathVariable은 question_id라는 변수에 입력이된다.
+
+## 쿼리날리기
+- Question.objects. api를 통해서 쿼리를 날릴 수 있따. 이 부분은 보다더 정확한 쿼리를 위해 공부가 필요하다.
+
+## 템플릿 엔진
+- 스프링에선 jsp, thymeleaf와 같은 템플릿 엔진들을 사용했다. Django는 앱 패키지 아래 templates라는 패키지를 만들면 장고가 템플릿임을 인식한다. 
+- context라는 것을 통해 view에서 데이터를 넣어 템플릿으로 전달한다. 스프링의 model과 같은 역할을 한다고 생각한다. (mvc의 model)
+
+## 404 응답
+- django.http로부터 Http404를 응답할 수  있다. 
+
+## shortcut
+- django.shortcut으로 부터 코드를 확 줄이게 도와주는 api들을 제공한다.
+- `from django.shortcuts import render, get_object_or_404`
+
+## url export하기(앱의 url namespace를 지정하는 방법 'app_name=namespace')
+- polls.urls.py에서 name에 어떠한 문자열을 입력했었다. 이 문자열은 해당 url의 이름이라 했었다.
+- 이 이름을 외부에서 사용할수 있도록 export할수 있다.
+- app_name=polls와 같이 변수를 하나 생성하여 외부에서 접근할수 있도록 하면 된다.! 
+- template에서는 하드코딩된 url말고 해당 변수 url 을 이용하면 더 쉬울것

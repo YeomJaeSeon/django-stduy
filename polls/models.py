@@ -7,7 +7,7 @@ from django.utils import timezone
 
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
-    pub_data = models.DateTimeField('date published')
+    pub_date = models.DateTimeField('date published')
 
     # shell에서 Question.objects.all()하면 어떤 데이터인지 한눈에 보기 어려워서 해당 메서드를 추가함 (java의 toString 오버라이딩하는 것과 같은듯)
     # shell이 아니더라도 해당 row데이터가 뭔지 식별하기 쉬워진다!
