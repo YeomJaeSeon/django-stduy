@@ -2,7 +2,7 @@
 
 - 파이썬 풀스택 프레임워크
 - manage.py 를 통해서 여러 명령어를 실행할수있음
-- `python manage.py runserver` : 개발서버 실행(파이썬으로만 실행되는 경량서버로 개발에서만 사용하도록! 배포할땐 nginx나 apache를 사용하자)
+- `python manage.py runserver` : 개발서버 실행(파이썬으로만 실행되는 경량서버로 개발에서만 사용하도록! 배포할땐 nginx나 apache를 사용하자, 개발용 서버답게 디버그 모드로 실행되네, 코드 수정하면 바로 reloading된다.)
 
 ## 주요 파일들
 
@@ -46,3 +46,20 @@
 - django에서 제공하는 api를 이용할수있다.
 - `./manage.py shell` 하면 쉘이 하나 뜬다. 해당 쉘에서 다양한 api를 실행할 수 있다. 
 - 놀라운건 shell에서 api를 통해 db에 쿼리를 날릴 수 있다..(다양한 db작업을 여기서 할 수 있따.)
+
+# Django와 관리자
+- 장고에선 관리자 기능을 그냥 제공한다. 따로 admin페이지를 만드는 등의 작업을 하지 않아도된다!?!
+- `./manage.py createsuperuser`명령어를 통해 관리자 생성가능
+- 생성한뒤 개발 서버 실행 -> /admin 요청하면 내가 만들지 않은 페이지가 있을 거다. 이건 쟝고에서 제공하는 페이지, 관리자 기능!(스프링 시큐리티랑 비슷하다 생각했다.)
+- 더 놀라운건 쟝고에서 제공하는 어드민 기능을 이용해서 django api를 이용할수 있따는 것이다.
+  - shell에서 테스트한 api들을 그냥 gui로 클릭하니 db에 insert가 이루어진다.
+- 내가 만든 모델을 admin에 추가하려면 
+  - 내가 만든 앱 패키지의 `admin.py`에 아래와 같이 작성하면 된다.
+```python
+from django.contrib import admin
+from .models import Question
+# Register your models here.
+
+# 내가 만든 모델을 어드민에 추가하는 코드
+admin.site.register(Question)
+```
