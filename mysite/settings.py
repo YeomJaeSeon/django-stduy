@@ -30,7 +30,10 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+# 장고와 함께 딸려오는 앱들, 라이브러리들인듯? pip list와의 차이점은? requirements.txt와 다른점은?
+# 후자는 프로젝트 전체적인 세팅 라이브러리들 (Django, python, pip, pytest), 전자는 Django에만 의존하는 라이브러리들이라 생각하겠다.
 INSTALLED_APPS = [
+    'polls.apps.PollsConfig', # polls 앱을 mysite프로젝트에 설정 - polls의 모델 활성화된다.
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
