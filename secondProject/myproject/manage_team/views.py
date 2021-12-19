@@ -2,14 +2,15 @@ import json
 from json.decoder import JSONDecodeError
 
 from django.http import JsonResponse
+from django.views.generic import View, ListView, DetailView
 
 from member.models import Member
 from .models import Team
 
 
-def create_team(request):
+class ListTeamView(ListView):
     # 모든 팀 조회
-    if request.method == 'GET':
+    def get(self, request):
         teams = Team.objects.all()
         result = [{
             'id': team.pk,
@@ -17,8 +18,10 @@ def create_team(request):
         } for team in teams]
 
         return JsonResponse({'data': result}, status=200)
-    # 팀 생성
-    if request.method == 'POST':
+
+
+class TeamView(View):
+    def post(self, request):
         try:
             data = json.loads(request.body)
             name = data['name']
@@ -36,19 +39,8 @@ def create_team(request):
             return JsonResponse({'message': 'KEY_ERROR'}, status=400)
 
 
-def delete_team(request, team_id):
-    if request.method == 'DELETE':
-        try:
-            team = Team.objects.get(pk=team_id)
-            team.delete()
-            return JsonResponse({'message': '팀 삭제 성공'}, status=200)
-
-        except Team.DoesNotExist:
-            return JsonResponse({'message': '해당 아이디의 팀이 없습니다'}, status=404)
-
-
-def register_team(request):
-    if request.method == 'POST':
+class RegisterTeamView(View):
+    def post(self, request):
         try:
             data = json.loads(request.body)
             user_name = data['user_name']
@@ -63,23 +55,37 @@ def register_team(request):
             found_member.save()
 
             return JsonResponse({'message': '팀 등록 성공'}, status=200)
+
         except Team.DoesNotExist:
             return JsonResponse({'message': '해당 팀 없습니다'}, status=404)
-        except Member.DoseNotExist:
+        except Member.DoesNotExist:
             return JsonResponse({'message': '해당 유저 없습니다'}, status=404)
         except JSONDecodeError:
             return JsonResponse({'message': 'JSON_DECODE_ERROR'}, status=400)
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status=400)
 
-def find_members_by_team_id(request, team_id):
-    if request.method == 'GET':
-        found_members = Member.objects.filter(team_id=team_id)
 
-        result = [{
-            'id' : member.pk,
-            'name': member.name,
-            'age': member.age,
-        } for member in found_members]
+class DeleteTeamView(View):
+    def delete(self, request, team_id):
+        try:
+            team = Team.objects.get(pk=team_id)
+            team.delete()
+            return JsonResponse({'message': '팀 삭제 성공'}, status=200)
 
-        return JsonResponse({'data': result}, status=200)
+        except Team.DoesNotExist:
+            return JsonResponse({'message': '해당 아이디의 팀이 없습니다'}, status=404)
+
+
+class MembersView(View):
+    def get(self, request, team_id):
+        if request.method == 'GET':
+            found_members = Member.objects.filter(team_id=team_id)
+
+            result = [{
+                'id': member.pk,
+                'name': member.name,
+                'age': member.age,
+            } for member in found_members]
+
+            return JsonResponse({'data': result}, status=200)
